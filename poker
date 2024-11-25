@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Pedido e Executar Fluxo de Trabalho</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        input, select, button { margin: 10px 0; padding: 5px; display: block; }
+    </style>
+</head>
+<body>
+    <h1>Teste de Automação</h1>
+    <select id="clube">
+        <option value="">Selecione o clube</option>
+        <option value="INTERIOR-POKER (641951)">INTERIOR POKER (641951)</option>
+        <option value="SPEW (31895)">SPEW (31895)</option>
+    </select>
+    <input type="text" id="idJogador" placeholder="ID Jogador">
+    <input type="text" id="valorPedido" placeholder="Valor do Pedido (ex: 1.234,56)">
+    <button onclick="criarPedidoEExecutarFluxo()">Criar Pedido</button>
+
+    <script>
+        // Função para validar e formatar o valor do pedido
+        function formatarValor(valor) {
+            // Remove espaços extras
+            valor = valor.trim();
+            
+            // Verifica se o valor está no formato correto: números, vírgula e até 2 casas decimais
+            const regex = /^\d{1,3}(\.\d{3})*(\,\d{0,2})?$/;
+
+            if (!regex.test(valor)) {
+                alert('Formato inválido! Use o formato: 1.234,56');
+                return null;
+            }
+
+            // Substitui a vírgula por ponto para converter para número
+            valor = valor.replace(/\./g, '').replace(',', '.');
+
+            // Converte para número decimal
+            return parseFloat(valor);
+        }
+
+        function criarPedidoEExecutarFluxo() {
+            const clube = document.getElementById('clube').value;
+            const idJogador = document.getElementById('idJogador').value;
+            const valorPedidoStr = document.getElementById('valorPedido').value;
+            const valorPedido = formatarValor(valorPedidoStr);
+
+            if (!clube || !idJogador || !valorPedido) {
+                alert('Por favor, preencha todos os campos corretamente.');
+                return;
+            }
+
+            // Executar o fluxo de trabalho do Automa
+            window.dispatchEvent(new CustomEvent('automa:execute-workflow', {
+                detail: { 
+                    id: 'SeuWorkflowID', // Substitua pelo ID real do seu workflow
+                    data: {
+                        variables: {
+                            clube: clube,
+                            idJogador: idJogador,
+                            valorPedido: valorPedido,
+                        }
+                    }
+                }
+            }));
+
+            alert('Pedido criado e fluxo de trabalho executado!');
+        }
+    </script>
+</body>
+</html>
